@@ -1,9 +1,9 @@
 .PHONY: build
 build:
-	bundler exec ruby neptune.rb build theory.ini -o build -t theory -n theory.db
+	bundler exec ruby neptune.rb build math-aggregator.ini -o build -t math-aggregator -n math-aggregator.db
 .PHONY: install
 install:
 	bundler install
 .PHONY: clean
 clean:
-	rm -rf theory.db build/
+	rm -rf math-aggregator.db math-aggregator.db-journal build/

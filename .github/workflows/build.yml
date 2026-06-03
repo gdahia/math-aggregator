@@ -26,11 +26,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ./theory.db
-            ./theory.db-journal
-          key: ${{ runner.os }}-${{ hashFiles('./theory.version') }}-${{ github.run_id }}
+            ./math-aggregator.db
+            ./math-aggregator.db-journal
+          key: ${{ runner.os }}-${{ hashFiles('./math-aggregator.version') }}-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-${{ hashFiles('./theory.version') }}
+            ${{ runner.os }}-${{ hashFiles('./math-aggregator.version') }}
       - name: Build
         run: |
           make build
