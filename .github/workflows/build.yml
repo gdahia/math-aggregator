@@ -26,18 +26,18 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ./math_aggregator.db
-            ./math_aggregator.db-journal
-          key: ${{ runner.os }}-${{ hashFiles('./math_aggregator.version') }}-${{ github.run_id }}
+            ./combinatorics_aggregator.db
+            ./combinatorics_aggregator.db-journal
+          key: ${{ runner.os }}-${{ hashFiles('./combinatorics_aggregator.version') }}-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-${{ hashFiles('./math_aggregator.version') }}
+            ${{ runner.os }}-${{ hashFiles('./combinatorics_aggregator.version') }}
       - name: Build
         run: |
           make build
       - name: Verify build output
         run: |
           test -s build/index.html
-          grep -q 'Math Aggregator' build/index.html
+          grep -q 'Combinatorics Aggregator' build/index.html
           ! grep -q 'Planet Untitled' build/index.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
