@@ -201,9 +201,6 @@ class FeedFetcherCondGetWithCache
     alias_method :old_fetch, :fetch
     def fetch(feed_rec)
         text = old_fetch(feed_rec)
-        if feed_rec.location == 'arxiv-rss' then
-            text = quote_dc_creators(text)
-        end
         return text
     end
 end
@@ -252,13 +249,21 @@ class Feed < ActiveRecord::Base
                                item.summary
             end
         elsif self.location == 'arxiv-rss' then
-            data.items = data.items.select {|item| item.id.end_with?('v1')}
-            date = data.published
+            data.items = data.items.select do |item|
+                announce_type = item.summary.to_s[/Announce Type: (\S+)/, 1]
+                announce_type.nil? || %w[new cross].include?(announce_type)
+            end
             data.items.each do |item|
-                item.published = date
-                item.updated = date
-                item.summary = '<p class="arxiv-authors"><b>Authors:</b> ' + CGI.escapeHTML(item.authors[0].text.to_s) + '</p>' +
-                               item.summary
+                summary = item.summary.to_s
+                summary = summary.sub(/\A.*?Announce Type: \S+\s*\n?/m, '')
+                summary = summary.sub(/\AAbstract:\s*/m, '')
+                item.summary = summary
+                if item.authors && !item.authors.empty?
+                    authors_text = item.authors[0].text.to_s
+                    authors = replace_latex_accents(authors_text).split(', ').map{|author| author_link(author)}
+                    item.summary = '<p class="arxiv-authors"><b>Authors:</b> ' + authors.join(', ') + '</p>' +
+                                   item.summary
+                end
             end
         else
             data.items.each do |item|
